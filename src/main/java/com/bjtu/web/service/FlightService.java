@@ -29,7 +29,7 @@ public interface FlightService {
      */
     IPage<Flight> getFlightsByMilesRange(int page, int size, List<Range> ranges);
     
-    // 统计各出生年份区间的数量
+    // 统计各里程区间的数量
     List<RangeCount> countMilesRanges(List<Range> ranges);
 
     /**
@@ -37,6 +37,6 @@ public interface FlightService {
      */
     IPage<Flight> getFlightsByHoursRange(int page, int size, List<Range> ranges);
 
-    // 统计各出生年份区间的数量
+    // 统计各飞行时间区间的数量
     List<RangeCount> countHoursRanges(List<Range> ranges);
 }
