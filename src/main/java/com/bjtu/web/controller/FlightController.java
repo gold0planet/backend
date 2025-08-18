@@ -1,95 +1,92 @@
 package com.bjtu.web.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.bjtu.web.common.PageResult;
+import com.bjtu.web.common.Result;
 import com.bjtu.web.model.Flight;
-import com.bjtu.web.mapper.FlightMapper;
+import com.bjtu.web.model.Range;
+import com.bjtu.web.model.RangeCount;
+import com.bjtu.web.service.FlightService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 航班控制器
+ */
 @RestController
 @RequestMapping("/flights")
 public class FlightController {
 
     @Autowired
-    private FlightMapper flightMapper;
+    private FlightService flightService;
 
-    // 获取所有航班
-    @GetMapping
-    public List<Flight> getAllFlights() {
-        return flightMapper.selectList(null);
+    /**
+     * 分页查询所有航班
+     */
+    @GetMapping("/page")
+    public Result<PageResult<Flight>> getFlightsByPage(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "20") int size
+    ) {
+        IPage<Flight> pageResult = flightService.getFlightsByPage(page, size);
+        return Result.success(PageResult.of(pageResult));
     }
 
-    // 根据ID获取特定航班
-    @GetMapping("/{id}")
-    public ResponseEntity<Flight> getFlightById(@PathVariable Integer id) {
-        Flight flight = flightMapper.selectById(id);
-        return flight != null ? 
-            ResponseEntity.ok(flight) : 
-            ResponseEntity.notFound().build();
+    /**
+     * 按出生年份区间分页查询
+     */
+    @PostMapping("/birth-range")
+    public Result<PageResult<Flight>> getFlightsByBirthRange(
+        @RequestBody List<Range> ranges,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "20") int size
+    ) {
+        // 1. 查询分页数据
+        IPage<Flight> pageResult = flightService.getFlightsByBirthRanges(page, size, ranges);
+        // 2. 统计各区间的数量
+        List<RangeCount> rangeCounts = flightService.countBirthRanges(ranges);
+        // 3. 合并分页数据和区间统计数据
+        PageResult<Flight> result = PageResult.of(pageResult, rangeCounts);
+        return Result.success(result);
     }
 
-    // 根据性别查询航班
-    @GetMapping("/sex/{sex}")
-    public List<Flight> getFlightsBySex(@PathVariable Integer sex) {
-        QueryWrapper<Flight> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("sex", sex);
-        return flightMapper.selectList(queryWrapper);
+
+    /**
+     * 按里程区间分页查询
+     */
+    @PostMapping("/miles-range")
+    public Result<PageResult<Flight>> getFlightsByMilesRange(
+        @RequestBody List<Range> ranges,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "20") int size
+    ) {
+        // 1. 查询分页数据
+        IPage<Flight> pageResult = flightService.getFlightsByMilesRange(page, size, ranges);
+        // 2. 统计各区间的数量
+        List<RangeCount> rangeCounts = flightService.countMilesRanges(ranges);
+        // 3. 合并分页数据和区间统计数据
+        PageResult<Flight> result = PageResult.of(pageResult, rangeCounts);
+        return Result.success(result);
     }
 
-    // 根据出生年份查询航班
-    @GetMapping("/birth/{birth}")
-    public List<Flight> getFlightsByBirth(@PathVariable Integer birth) {
-        QueryWrapper<Flight> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("birth", birth);
-        return flightMapper.selectList(queryWrapper);
-    }
-
-    // 查询里程大于指定值的航班
-    @GetMapping("/miles/gt/{miles}")
-    public List<Flight> getFlightsByMilesGreaterThan(@PathVariable Integer miles) {
-        QueryWrapper<Flight> queryWrapper = new QueryWrapper<>();
-        queryWrapper.gt("miles", miles);
-        return flightMapper.selectList(queryWrapper);
-    }
-
-    // 查询飞行小时数大于指定值的航班
-    @GetMapping("/hours/gt/{hours}")
-    public List<Flight> getFlightsByHoursGreaterThan(@PathVariable Integer hours) {
-        QueryWrapper<Flight> queryWrapper = new QueryWrapper<>();
-        queryWrapper.gt("hours", hours);
-        return flightMapper.selectList(queryWrapper);
-    }
-
-    // 创建新航班
-    @PostMapping
-    public Flight createFlight(@RequestBody Flight flight) {
-        flightMapper.insert(flight);
-        return flight;
-    }
-
-    // 更新航班信息
-    @PutMapping("/{id}")
-    public ResponseEntity<Flight> updateFlight(@PathVariable Integer id, @RequestBody Flight flightDetails) {
-        Flight existingFlight = flightMapper.selectById(id);
-        
-        if (existingFlight != null) {
-            flightDetails.setId(id);
-            flightMapper.updateById(flightDetails);
-            return ResponseEntity.ok(flightDetails);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // 删除航班
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFlight(@PathVariable Integer id) {
-        int result = flightMapper.deleteById(id);
-        return result > 0 ? 
-            ResponseEntity.ok().build() : 
-            ResponseEntity.notFound().build();
+    /**
+     * 按飞行时间区间分页查询
+     */
+    @PostMapping("/hours-range")
+    public Result<PageResult<Flight>> getFlightsByHoursRange(
+        @RequestBody List<Range> ranges,
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "20") int size
+    ) {
+        // 1. 查询分页数据
+        IPage<Flight> pageResult = flightService.getFlightsByHoursRange(page, size, ranges);
+        // 2. 统计各区间的数量
+        List<RangeCount> rangeCounts = flightService.countHoursRanges(ranges);
+        // 3. 合并分页数据和区间统计数据
+        PageResult<Flight> result = PageResult.of(pageResult, rangeCounts);
+        return Result.success(result);
     }
 }
