@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.bjtu.web.common.PageResult;
 import com.bjtu.web.common.Result;
 import com.bjtu.web.model.Flight;
-import com.bjtu.web.model.Range;
-import com.bjtu.web.model.RangeCount;
+import com.bjtu.web.model.dto.Range;
+import com.bjtu.web.model.vo.RangeCount;
 import com.bjtu.web.service.FlightService;
+import com.bjtu.web.service.HistoryRangeService;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,9 @@ public class FlightController {
 
     @Autowired
     private FlightService flightService;
+
+    @Autowired
+    private HistoryRangeService historyRangeService;
 
     /**
      * 分页查询所有航班
@@ -44,6 +49,9 @@ public class FlightController {
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20") int size
     ) {
+        // 将ranges存储数据库
+        historyRangeService.saveHistoryRange(ranges, "birth");
+
         // 1. 查询分页数据
         IPage<Flight> pageResult = flightService.getFlightsByBirthRanges(page, size, ranges);
         // 2. 统计各区间的数量
@@ -63,6 +71,8 @@ public class FlightController {
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20") int size
     ) {
+        // 将ranges存储数据库
+        historyRangeService.saveHistoryRange(ranges, "miles");
         // 1. 查询分页数据
         IPage<Flight> pageResult = flightService.getFlightsByMilesRange(page, size, ranges);
         // 2. 统计各区间的数量
@@ -81,6 +91,8 @@ public class FlightController {
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20") int size
     ) {
+        // 将ranges存储数据库
+        historyRangeService.saveHistoryRange(ranges, "hours");
         // 1. 查询分页数据
         IPage<Flight> pageResult = flightService.getFlightsByHoursRange(page, size, ranges);
         // 2. 统计各区间的数量

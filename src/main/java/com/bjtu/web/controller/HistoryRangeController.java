@@ -22,19 +22,6 @@ public class HistoryRangeController {
     private HistoryRangeService historyRangeService;
 
     /**
-     * 保存历史区间
-     */
-    @PostMapping
-    public Result<HistoryRange> saveHistoryRange(@RequestBody RangeQueryRequest request) {
-        if (request.getSaveAsHistory() == null || !request.getSaveAsHistory()) {
-            return Result.error("未指定保存为历史区间");
-        }
-        
-        HistoryRange historyRange = historyRangeService.saveHistoryRange(request);
-        return Result.success(historyRange);
-    }
-
-    /**
      * 根据ID获取历史区间
      */
     @GetMapping("/{id}")
@@ -49,7 +36,7 @@ public class HistoryRangeController {
     @GetMapping("/page")
     public Result<PageResult<HistoryRange>> getHistoryRangesByPage(
         @RequestParam(defaultValue = "1") int page,
-        @RequestParam(defaultValue = "20") int size,
+        @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) String rangeType,
         @RequestParam(required = false) String keyword
     ) {

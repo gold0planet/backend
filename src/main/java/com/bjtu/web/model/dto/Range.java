@@ -1,4 +1,4 @@
-package com.bjtu.web.model;
+package com.bjtu.web.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

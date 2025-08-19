@@ -24,17 +24,14 @@ public class HistoryRange implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @TableField("range_name")
-    private String rangeName;           // 区间名称
-
     @TableField("range_type")
     private String rangeType;           // 区间类型（birth/miles/hours）
 
     @TableField("start_value")
-    private Integer startValue;         // 起始值
+    private String startValue;         // 起始值
 
     @TableField("end_value")
-    private Integer endValue;           // 结束值
+    private String endValue;           // 结束值
 
     @TableField("created_time")
     private LocalDateTime createdTime;  // 创建时间

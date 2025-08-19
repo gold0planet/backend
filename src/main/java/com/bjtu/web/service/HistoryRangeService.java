@@ -2,7 +2,7 @@ package com.bjtu.web.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.bjtu.web.model.HistoryRange;
-import com.bjtu.web.model.dto.RangeQueryRequest;
+import com.bjtu.web.model.dto.Range;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface HistoryRangeService {
     /**
      * 保存历史区间
      */
-    HistoryRange saveHistoryRange(RangeQueryRequest request);
+    HistoryRange saveHistoryRange(List<Range> ranges, String rangeType);
     
     /**
      * 根据ID获取历史区间

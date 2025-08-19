@@ -1,7 +1,7 @@
 package com.bjtu.web.common;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.bjtu.web.model.RangeCount;
+import com.bjtu.web.model.vo.RangeCount;
 
 import lombok.Data;
 

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bjtu.web.model.HistoryRange;
-import com.bjtu.web.model.dto.RangeQueryRequest;
+import com.bjtu.web.model.dto.Range;
 import com.bjtu.web.repository.HistoryRangeMapper;
 import com.bjtu.web.service.HistoryRangeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +24,20 @@ public class HistoryRangeServiceImpl implements HistoryRangeService {
     private HistoryRangeMapper historyRangeMapper;
 
     @Override
-    public HistoryRange saveHistoryRange(RangeQueryRequest request) {
+    public HistoryRange saveHistoryRange(List<Range> ranges, String rangeType) {
         HistoryRange historyRange = new HistoryRange();
-        historyRange.setRangeName(request.getRangeName());
-        historyRange.setRangeType(request.getRangeType());
+        historyRange.setRangeType(rangeType);
         historyRange.setCreatedTime(LocalDateTime.now());
 
-        // 如果只有一个区间，保存起始值和结束值
-        if (request.getRanges() != null && !request.getRanges().isEmpty()) {
-            RangeQueryRequest.RangeItem firstRange = request.getRanges().get(0);
-            historyRange.setStartValue(firstRange.getStartValue());
-            historyRange.setEndValue(firstRange.getEndValue());
+        // 组合起始值和结束值：start: 1,5,8   end: 5,8,10
+        String startValue = "";
+        String endValue = "";
+        for (Range range : ranges) {
+            startValue += range.getStart() + ",";
+            endValue += range.getEnd() + ",";
         }
-
+        historyRange.setStartValue(startValue);
+        historyRange.setEndValue(endValue);
         historyRangeMapper.insert(historyRange);
         return historyRange;
     }
